@@ -1,15 +1,6 @@
 ﻿/**
  * @file main.cpp
  * @brief Menú principal para pruebas de algoritmos de criptografía.
- *
- * Este programa permite al usuario probar cuatro algoritmos diferentes:
- * - Cifrado César
- * - Codificación XOR
- * - Conversión ASCII ↔ Binario
- * - Cifrado DES
- *
- * Cada algoritmo tiene su propia función de prueba, y el menú guía
- * al usuario para ejecutarlas desde consola.
  */
 
 #include <iostream>
@@ -17,12 +8,10 @@
 #include "../include/XOREncoder.h"
 #include "../include/AsciiBinary.h"
 #include "../include/DES.h"
+#include "../include/KeyGenerator.h"
 
  // == FUNCIONES ==
 
- /**
-  * @brief Ejecuta una prueba con el algoritmo de cifrado César.
-  */
 void testCesar() {
     std::cout << "\n--- Prueba del cifrado Cesar ---\n";
 
@@ -31,7 +20,6 @@ void testCesar() {
         "En esta materia, aprenderan a cifrar mensajes y descifrar codigos ocultos";
 
     int rotacion = 4;
-
     CesarEncryption cesar;
 
     std::string cifrado = cesar.encode(mensaje, rotacion);
@@ -42,18 +30,12 @@ void testCesar() {
 
     std::cout << "Clave probable (por frecuencia): "
         << cesar.evaluatePossibleKey(cifrado) << std::endl;
-
-    // cesar.bruteForceAttack(cifrado); // Opcional
 }
 
-/**
- * @brief Ejecuta una prueba con el algoritmo de codificación XOR.
- */
 void testXorEncoder() {
     std::cout << "\n--- Prueba del cifrado XOR ---\n";
 
     XOREncoder xorEncoder;
-
     std::string mensaje = "Hola Mundo";
     std::string clave = "clave";
 
@@ -75,14 +57,10 @@ void testXorEncoder() {
     xorEncoder.bruteForceByDictionary(bytesCifrados);
 }
 
-/**
- * @brief Ejecuta una prueba de conversión ASCII a binario y viceversa.
- */
 void testAsciiBinary() {
     std::cout << "\n--- Prueba de conversión ASCII Binario ---\n";
 
     AsciiBinary ab;
-
     std::string input = "Hello, World!";
     std::cout << "Mensaje original: " << input << std::endl;
 
@@ -93,16 +71,11 @@ void testAsciiBinary() {
     std::cout << "Binario a texto : " << decoded << std::endl;
 }
 
-/**
- * @brief Ejecuta una prueba con el algoritmo de cifrado DES simplificado.
- */
 void testDes() {
     std::cout << "\n--- Prueba del cifrado DES ---\n";
 
-    std::bitset<64> plaintext(
-        "0001001000110100010101100111100010011010101111001101111011110001");
-    std::bitset<64> key(
-        "0001001100110100010101110111100110011011101111001101111111110001");
+    std::bitset<64> plaintext("0001001000110100010101100111100010011010101111001101111011110001");
+    std::bitset<64> key("0001001100110100010101110111100110011011101111001101111111110001");
 
     DES des(key);
     auto ciphertext = des.encode(plaintext);
@@ -112,12 +85,28 @@ void testDes() {
     std::cout << "Cifrado     : " << ciphertext << std::endl;
 }
 
+void testRandomDesKey() {
+    std::cout << "\n--- Prueba de DES con clave aleatoria ---\n";
+
+    std::string key = generateRandomKey();
+
+    std::cout << "Clave como texto (puede contener caracteres no imprimibles): " << key << std::endl;
+    printKeyHex(key);
+
+    std::bitset<64> keyBits = stringToBitset(key);
+    std::cout << "Clave como bits : " << keyBits << std::endl;
+
+    std::bitset<64> plaintext("0100100001100101011011000110110001101111001000010000000000000000"); // "Hello!" + relleno
+    std::cout << "Texto plano     : " << plaintext << std::endl;
+
+    DES des(keyBits);
+    std::bitset<64> ciphertext = des.encode(plaintext);
+
+    std::cout << "Texto cifrado   : " << ciphertext << std::endl;
+}
+
 // ================= MENÚ PRINCIPAL =================
 
-/**
- * @brief Función principal. Despliega un menú para elegir el algoritmo a probar.
- * @return int Código de salida (0 para finalizar).
- */
 int main() {
     int opcion;
 
@@ -127,10 +116,11 @@ int main() {
         std::cout << "2. Codificacion XOR\n";
         std::cout << "3. ASCII  Binario\n";
         std::cout << "4. Cifrado DES\n";
+        std::cout << "5. Clave aleatoria DES\n";
         std::cout << "0. Salir\n";
         std::cout << "Seleccione una opcion: ";
         std::cin >> opcion;
-        std::cin.ignore(); // Limpiar el buffer
+        std::cin.ignore();
 
         switch (opcion) {
         case 1:
@@ -144,6 +134,9 @@ int main() {
             break;
         case 4:
             testDes();
+            break;
+        case 5:
+            testRandomDesKey();
             break;
         case 0:
             std::cout << "Saliendo del programa...\n";

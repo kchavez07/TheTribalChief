@@ -130,10 +130,12 @@
     <ClInclude Include="..\..\include\AsciiBinary.h" />
     <ClInclude Include="..\..\include\CesarEncryption.h" />
     <ClInclude Include="..\..\include\DES.h" />
+    <ClInclude Include="..\..\include\Keygenerator.h" />
     <ClInclude Include="..\..\include\Prerequisites.h" />
     <ClInclude Include="..\..\include\XOREncoder.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Keygenerator.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
