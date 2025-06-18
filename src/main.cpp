@@ -9,11 +9,12 @@
 #include "../include/AsciiBinary.h"
 #include "../include/DES.h"
 #include "../include/KeyGenerator.h"
+#include "../include/Vigenere.h"
 
- // == FUNCIONES ==
+ // ================= FUNCIONES =================
 
 void testCesar() {
-    std::cout << "\n--- Prueba del cifrado Cesar ---\n";
+    std::cout << "\n--- Prueba del cifrado César ---\n";
 
     std::string mensaje =
         "Bienvenidos a la clase de seguridad para videojuegos. "
@@ -96,13 +97,33 @@ void testRandomDesKey() {
     std::bitset<64> keyBits = stringToBitset(key);
     std::cout << "Clave como bits : " << keyBits << std::endl;
 
-    std::bitset<64> plaintext("0100100001100101011011000110110001101111001000010000000000000000"); // "Hello!" + relleno
+    std::bitset<64> plaintext("0100100001100101011011000110110001101111001000010000000000000000");
     std::cout << "Texto plano     : " << plaintext << std::endl;
 
     DES des(keyBits);
     std::bitset<64> ciphertext = des.encode(plaintext);
 
     std::cout << "Texto cifrado   : " << ciphertext << std::endl;
+}
+
+/**
+ * @brief Prueba del cifrado Vigenère.
+ */
+void testVigenere() {
+    std::cout << "\n--- Prueba del cifrado Vigenere ---\n";
+
+    std::string text = "Hola este mensaje otorga una decima";
+    std::string key = "TheTribalChief01";
+
+    std::cout << "Texto original : " << text << std::endl;
+    std::cout << "Clave          : " << key << std::endl;
+
+    Vigenere vigenere(key);
+    std::string encrypted = vigenere.encode(text);
+    std::cout << "Texto cifrado  : " << encrypted << std::endl;
+
+    std::string decrypted = vigenere.decode(encrypted);
+    std::cout << "Texto descifrado: " << decrypted << std::endl;
 }
 
 // ================= MENÚ PRINCIPAL =================
@@ -114,9 +135,10 @@ int main() {
         std::cout << "\n=== Laboratorio de Criptografia ===\n";
         std::cout << "1. Cifrado Cesar\n";
         std::cout << "2. Codificacion XOR\n";
-        std::cout << "3. ASCII  Binario\n";
+        std::cout << "3. ASCII-Binario\n";
         std::cout << "4. Cifrado DES\n";
         std::cout << "5. Clave aleatoria DES\n";
+        std::cout << "6. Cifrado Vigenere\n";
         std::cout << "0. Salir\n";
         std::cout << "Seleccione una opcion: ";
         std::cin >> opcion;
@@ -138,11 +160,14 @@ int main() {
         case 5:
             testRandomDesKey();
             break;
+        case 6:
+            testVigenere();
+            break;
         case 0:
             std::cout << "Saliendo del programa...\n";
             break;
         default:
-            std::cout << "Opción invalida. Intente de nuevo.\n";
+            std::cout << "Opción inválida. Intente de nuevo.\n";
         }
 
     } while (opcion != 0);

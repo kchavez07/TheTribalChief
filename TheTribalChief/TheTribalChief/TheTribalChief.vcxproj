@@ -132,6 +132,7 @@
     <ClInclude Include="..\..\include\DES.h" />
     <ClInclude Include="..\..\include\Keygenerator.h" />
     <ClInclude Include="..\..\include\Prerequisites.h" />
+    <ClInclude Include="..\..\include\Vigenere.h" />
     <ClInclude Include="..\..\include\XOREncoder.h" />
   </ItemGroup>
   <ItemGroup>
