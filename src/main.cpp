@@ -126,6 +126,19 @@ void testVigenere() {
     std::cout << "Texto descifrado: " << decrypted << std::endl;
 }
 
+void testVigenereBruteForce() {
+    std::cout << "\n--- Romper Vigenere por fuerza bruta ---\n";
+
+    std::string cipherText;
+    std::cout << "Introduce el texto cifrado: ";
+    std::cin.ignore(); // para evitar problemas si vienes de un std::cin anterior
+    std::getline(std::cin, cipherText);
+
+    std::string decrypted = breakBruteForce(cipherText, 3); // puedes probar con 3 o 4
+    std::cout << "Texto descifrado más probable: " << decrypted << std::endl;
+}
+
+
 // ================= MENÚ PRINCIPAL =================
 
 int main() {
@@ -139,6 +152,7 @@ int main() {
         std::cout << "4. Cifrado DES\n";
         std::cout << "5. Clave aleatoria DES\n";
         std::cout << "6. Cifrado Vigenere\n";
+        std::cout << "7. Romper Vigenere (fuerza bruta)\n";
         std::cout << "0. Salir\n";
         std::cout << "Seleccione una opcion: ";
         std::cin >> opcion;
@@ -163,6 +177,10 @@ int main() {
         case 6:
             testVigenere();
             break;
+        case 7:
+            testVigenereBruteForce();
+            break;
+
         case 0:
             std::cout << "Saliendo del programa...\n";
             break;
