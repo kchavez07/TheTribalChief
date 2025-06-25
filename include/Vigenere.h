@@ -73,55 +73,165 @@ public:
 		return result; // Return the encoded string
 	}
 
+	static double fitness(const std::string& text) {
+		static const std::vector<std::string> comunes = {
+		" DE ", " LA ", " EL ", " QUE ", " Y ",
+		" A ", " EN ", " UN ", " PARA ", " CON ",
+		" POR ", " COMO ", " SU ", " AL ", " DEL ",
+		" LOS ", " SE ", " NO ", " MAS ", " O ",
+		" SI ", " YA ", " TODO ", " ESTA ", " HAY ",
+		" ESTO ", " SON ", " TIENE ", " HACE ", " SUS ",
+		" VIDA ", " NOS ", " TE ", " LO ", " ME ",
+		" ESTE ", " ESA ", " ESE ", " BIEN ", " MUY ",
+		" PUEDE ", " TAMBIEN ", " AUN ", " MI ", " DOS ",
+		" UNO ", " OTRO ", " NUEVO ", " SIN ", " ENTRE ",
+		" SOBRE "
+		};
+
+		double score = 0;
+		for (auto& w : comunes) {
+			size_t pos = 0;
+			while ((pos = text.find(w, pos)) != std::string::npos) {
+				score += w.length();
+				pos += w.length();
+			}
+		}
+		return score;
+
+	}
+
+	static std::string breakEncode(const std::string& text, int maxKeyLenght) {
+		std::string bestKey;
+		std::string bestText;
+		std::string trailKey;
+
+		double bestScore = -std::numeric_limits<double>::infinity(); // Initialize best score
+
+		// Funcion revursiva para generar todas las posibles claves de longitud
+		std::function<void(int, int)> dfs = [&](int pos, int maxLen) {
+			if (pos == maxLen) {
+				Vigenere v(trailKey);
+				std::string decodedText = v.decode(text);
+				double score = fitness(decodedText); // Score the decoded text
+				if (score > bestScore) {
+					bestScore = score;
+					bestKey = trailKey;
+					bestText = decodedText;
+				}
+				return;
+			}
+			for (char c = 'A'; c <= 'Z'; ++c) {
+				trailKey[pos] = c;
+				dfs(pos + 1, maxLen);
+			}
+			};
+
+		for (int L = 1; L <= maxKeyLenght; ++L) {
+			trailKey.assign(L, 'A');
+			dfs(0, L);
+		}
+
+		std::cout << "*** Fuerza Bruta Vigenère ***\n";
+		std::cout << "Clave encontrada:  " << bestKey << "\n";
+		std::cout << "Texto descifrado:  " << bestText << "\n\n";
+		return bestKey;
+	}
+
 private:
 	std::string key; // The key for the Vigenere cipher
 };
+/*
+#include "Prerequisites.h"
+#include "Vigenere.h"
 
-#include <unordered_set>
-#include <sstream>
-#include <cmath>
+int main() {
+	std::string text = "Hola este mensaje otorga una decima";
+	std::string key = "RobertoCharreton00";
 
-std::string breakBruteForce(const std::string& cipherText, int maxKeyLength = 4) {
-	std::unordered_set<std::string> commonWords = {
-		"EL", "LA", "DE", "QUE", "Y", "EN", "A", "UN", "SER", "ES", "POR", "CON"
-	};
+	std::cout << "Texto original: " << text << std::endl;
+	std::cout << "Clave: " << key << std::endl;
 
-	std::string bestPlaintext;
-	int maxMatches = 0;
+	Vigenere vigenere(key);
+	std::string encrypted = vigenere.encode(text);
+	std::cout << "Texto cifrado: " << encrypted << std::endl;
 
-	for (int length = 1; length <= maxKeyLength; ++length) {
-		int totalKeys = static_cast<int>(pow(26, length));
+	std::string decrypted = vigenere.decode(encrypted);
+	std::cout << "Texto descifrado: " << decrypted << std::endl;
 
-		for (int i = 0; i < totalKeys; ++i) {
-			std::string testKey;
-			int value = i;
-			for (int j = 0; j < length; ++j) {
-				char letter = 'A' + (value % 26);
-				testKey = letter + testKey;
-				value /= 26;
-			}
 
-			Vigenere candidate(testKey);
-			std::string plaintext = candidate.decode(cipherText);
+	return 0;
+}
 
-			std::istringstream iss(plaintext);
-			std::string word;
-			int matchCount = 0;
+*/
 
-			while (iss >> word) {
-				std::string upperWord;
-				for (char c : word)
-					if (std::isalpha(c)) upperWord += std::toupper(c);
+#include <iostream>
+#include <string>
+#include <vector>
+#include <cctype>
 
-				if (commonWords.count(upperWord)) matchCount++;
-			}
+std::string bestKey;
+std::string bestText;
+double bestScore = 0;
+std::string trailKey;
 
-			if (matchCount > maxMatches) {
-				maxMatches = matchCount;
-				bestPlaintext = plaintext;
+// Evalúa qué tan bueno es el texto decodificado comparando palabras comunes
+double fitness(const std::string& decodedText) {
+	std::vector<std::string> palabrasClave = { "EL", "LA", "DE", "QUE", "Y", "EN", "UN", "SER", "ES", "CON" };
+	int score = 0;
+
+	std::string palabraActual;
+	for (char c : decodedText) {
+		if (std::isalpha(c)) {
+			palabraActual += std::toupper(c);
+		}
+		else {
+			if (!palabraActual.empty()) {
+				for (const auto& palabra : palabrasClave) {
+					if (palabraActual == palabra) score++;
+				}
+				palabraActual.clear();
 			}
 		}
 	}
 
-	return bestPlaintext;
+	return static_cast<double>(score);
 }
+
+// DFS recursivo para generar claves y probarlas
+void dfs(int pos, int maxLen, const std::string& text) {
+	if (pos == maxLen) {
+		Vigenere v(trailKey);
+		std::string decodedText = v.decode(text);
+		double score = fitness(decodedText);
+		if (score > bestScore) {
+			bestScore = score;
+			bestKey = trailKey;
+			bestText = decodedText;
+		}
+		return;
+	}
+
+	for (char c = 'A'; c <= 'Z'; ++c) {
+		trailKey[pos] = c;
+		dfs(pos + 1, maxLen, text);
+	}
+}
+
+// Función principal para romper Vigenere
+std::string breakBruteForce(const std::string& text, int maxKeyLength = 3) {
+	bestKey.clear();
+	bestText.clear();
+	bestScore = 0;
+
+	for (int L = 1; L <= maxKeyLength; ++L) {
+		trailKey.assign(L, 'A');
+		dfs(0, L, text);
+	}
+
+	std::cout << "\n*** Fuerza Bruta Vigenère ***\n";
+	std::cout << "Clave encontrada : " << bestKey << "\n";
+	std::cout << "Texto descifrado : " << bestText << "\n\n";
+
+	return bestKey;
+}
+

@@ -2,14 +2,14 @@
  * @file main.cpp
  * @brief Menú principal para pruebas de algoritmos de criptografía.
  */
-
-#include <iostream>
+#include "../include/Prerequisites.h"
 #include "../include/CesarEncryption.h"
 #include "../include/XOREncoder.h"
 #include "../include/AsciiBinary.h"
 #include "../include/DES.h"
 #include "../include/KeyGenerator.h"
 #include "../include/Vigenere.h"
+#include "../include/CryptoGenerator.h"
 
  // ================= FUNCIONES =================
 
@@ -138,6 +138,22 @@ void testVigenereBruteForce() {
     std::cout << "Texto descifrado más probable: " << decrypted << std::endl;
 }
 
+void testCryptoGenerator() {
+    std::cout << "\n--- Prueba de CryptoGenerator ---\n";
+
+    CryptoGenerator cryptoGen;
+
+    std::string password = cryptoGen.generatePassword(16);
+    std::cout << "Contraseña generada: " << password << std::endl;
+
+    auto randomBytes = cryptoGen.generateBytes(16);
+    std::cout << "Bytes aleatorios (en decimal): ";
+    for (uint8_t byte : randomBytes) {
+        std::cout << static_cast<int>(byte) << " ";
+    }
+    std::cout << std::endl;
+}
+
 
 // ================= MENÚ PRINCIPAL =================
 
@@ -153,6 +169,7 @@ int main() {
         std::cout << "5. Clave aleatoria DES\n";
         std::cout << "6. Cifrado Vigenere\n";
         std::cout << "7. Romper Vigenere (fuerza bruta)\n";
+        std::cout << "8. Generador criptografico (contrasena y bytes aleatorios)\n";
         std::cout << "0. Salir\n";
         std::cout << "Seleccione una opcion: ";
         std::cin >> opcion;
@@ -180,7 +197,9 @@ int main() {
         case 7:
             testVigenereBruteForce();
             break;
-
+        case 8:
+            testCryptoGenerator();
+            break;
         case 0:
             std::cout << "Saliendo del programa...\n";
             break;
