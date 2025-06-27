@@ -143,16 +143,27 @@ void testCryptoGenerator() {
 
     CryptoGenerator cryptoGen;
 
+    // 1) Generar contraseña aleatoria
     std::string password = cryptoGen.generatePassword(16);
     std::cout << "Contraseña generada: " << password << std::endl;
 
+    // 2) Generar 16 bytes aleatorios
     auto randomBytes = cryptoGen.generateBytes(16);
-    std::cout << "Bytes aleatorios (en decimal): ";
-    for (uint8_t byte : randomBytes) {
-        std::cout << static_cast<int>(byte) << " ";
-    }
-    std::cout << std::endl;
+    std::cout << "Bytes aleatorios (hex): " << cryptoGen.toHex(randomBytes) << std::endl;
+
+    // 3) Generar clave AES de 128 bits
+    auto key128 = cryptoGen.generateKey(128);
+    std::cout << "Clave AES 128-bit (hex): " << cryptoGen.toHex(key128) << std::endl;
+
+    // 4) Generar IV de 128 bits
+    auto iv = cryptoGen.generateIV(16);
+    std::cout << "IV 128-bit (hex): " << cryptoGen.toHex(iv) << std::endl;
+
+    // 5) Generar salt y mostrar en Base64
+    auto salt = cryptoGen.generateSalt(16);
+    std::cout << "Salt (Base64): " << cryptoGen.toBase64(salt) << std::endl;
 }
+
 
 
 // ================= MENÚ PRINCIPAL =================
