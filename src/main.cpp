@@ -143,7 +143,7 @@ void testCryptoGenerator() {
 
     CryptoGenerator cryptoGen;
 
-    // 1) Generar contraseña aleatoria
+    // 1) Generar una contraseña aleatoria
     std::string password = cryptoGen.generatePassword(16);
     std::cout << "Contraseña generada: " << password << std::endl;
 
@@ -161,9 +161,18 @@ void testCryptoGenerator() {
 
     // 5) Generar salt y mostrar en Base64
     auto salt = cryptoGen.generateSalt(16);
-    std::cout << "Salt (Base64): " << cryptoGen.toBase64(salt) << std::endl;
-}
+    std::string saltB64 = cryptoGen.toBase64(salt);
+    std::cout << "Salt (Base64): " << saltB64 << std::endl;
 
+    // 6) Decodificar el Base64 a bytes
+    auto fromBase64 = cryptoGen.fromBase64(saltB64);
+    std::cout << "Salt decodificada (hex): " << cryptoGen.toHex(fromBase64) << std::endl;
+
+    // 7) Limpieza segura
+    cryptoGen.secureWipe(iv);
+    cryptoGen.secureWipe(fromBase64);
+    std::cout << "Salt e IV borrados de forma segura.\n";
+}
 
 
 // ================= MENÚ PRINCIPAL =================

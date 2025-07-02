@@ -1,10 +1,5 @@
-/**
- * @file
- * @brief Archivo principal del sistema. Contiene las librerías estándar utilizadas.
- */
-
 #pragma once
- // STD Libraries
+// STD Libraries
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -16,3 +11,5 @@
 #include <functional> 
 #include <stdexcept>
 #include <random>
+#include <mutex>
+#include <array>
